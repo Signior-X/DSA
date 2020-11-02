@@ -29,7 +29,7 @@ struct Node {
     int color;
 };
 
-// A utility function to create a new BST node
+// A utility function to create a new BST node using value and color
 struct Node *newNode(int val, int col)
 {
     struct Node *temp =  (struct Node *)malloc(sizeof(struct Node));
@@ -39,8 +39,11 @@ struct Node *newNode(int val, int col)
     return temp;
 }
 
+// The head pointer or the root pointer which poitns to the root node
 Node *rootPointer = newNode(100, 0);
-// AT THE LEFT of this ROOTPointer, the root node will be stored
+// IMPORTANT! AT THE LEFT of this ROOTPointer, the root node will be stored
+
+
 
 /* --- Then define some basic functions --- */
 
@@ -86,7 +89,11 @@ Node *getSibling(Node *node) {
     }
 }
 
-
+/**
+ * @param the node
+ * 
+ * @return the Uncle of the current node, or say the parents sibling
+ */ 
 Node *getUncle(Node *node) {
     Node *par = getParent(node);
 
@@ -173,6 +180,14 @@ void rotateRight(Node *node) {
 
 
 /* --- Searching --- */
+
+/**
+ * Searches the value in the tree and returns the first node with that value
+ * @param root - The tree
+ * @param val - The value to be searched
+ * 
+ * @return Node which has the values val
+ */
 Node *searchNode(Node *root, int val) {
     
     // Base Cases: root is null or key is present at root
@@ -191,6 +206,11 @@ Node *searchNode(Node *root, int val) {
 
 /* --- Insertion --- */
 
+/**
+ * Recursilvely inserts the node in the tree
+ * @param root - The root of the tree where to be inserted
+ * @param node - The node to be inserted
+ */
 void simpleInsertion(Node *root, Node *node) {
     // root should not be nullptr
 
@@ -227,6 +247,10 @@ void simpleInsertion(Node *root, Node *node) {
     node -> color = 1; // 1 means red as inserted node
 }
 
+/**
+ * After the simple insertion, balance the tree starting at the inserted node
+ * @param node - The node which was inserted 
+ */
 void repairInsertedTree(Node *node) {
     // Here we check for the insertion order and do the steps accordingly
 
@@ -255,7 +279,7 @@ void repairInsertedTree(Node *node) {
     } else {
         // Now solving the rotation cases
         
-        // Case A
+        // Case A If zig zag
         Node *p = getParent(node);
         Node *g = getGrandParent(node);
 
@@ -269,7 +293,7 @@ void repairInsertedTree(Node *node) {
             }
         }
 
-        // Case B
+        // Case B if zig zag it was fixed above, not fix double red
         Node *p2 = getParent(node);
         Node *g2 = getGrandParent(node);
 
@@ -289,7 +313,7 @@ void repairInsertedTree(Node *node) {
 
 
 /**
- * Inserts a node in the Red black tree and also updates the rootPointer if needed
+ * INSERTS a node in the Red black tree and also updates the rootPointer if needed
  * 
  * @param The root of the tree in which you want to insert
  * @param The new node you want to insert
@@ -315,6 +339,7 @@ Node *insertNode(Node *root, Node *node) {
 
 /* --- Deletion --- */
 
+// Swap the values between node u and v
 void swapValues(Node *u, Node *v) { 
     int temp;
     temp = u -> key; 
@@ -322,6 +347,8 @@ void swapValues(Node *u, Node *v) {
     v -> key = temp; 
 }
 
+// Finds the predicissor of the node
+// It loops right wards in the left child of the node to find the predicissor
 Node *findPredecissor(Node *node) {
 
     // Take the left node
@@ -334,7 +361,13 @@ Node *findPredecissor(Node *node) {
     return tnode;
 }
 
-Node *nodeReplace(Node *node) {
+/**
+ * Find the node with which the deleted node needs to be replaced
+ * @param node - The node which has to deleted in the tree
+ * 
+ * @return The node if there is any node witch which it needs to be replaced or nullptr if leaf node
+ */
+Node *findNodeToReplace(Node *node) {
     // If leaf node
     if (node -> left == nullptr && node -> right == nullptr)
         return nullptr;
@@ -353,13 +386,121 @@ Node *nodeReplace(Node *node) {
 }
 
 
+/**
+ * Function to fix the doubly black nodes created while deletion
+ * @param root - The root of the tree
+ * @param node - The suspected doubly black node
+ */
 void fixDoubleBlack(Node *root, Node *node) {
     // Here we will fix the doubleBlackNode
     cout << "Fixing double black" << endl;
-}
 
+    // Recursively fix the problems till the root
+    if (node == root) {
+        return;
+    }
+
+    Node *s = getSibling(node);
+    Node *p = getParent(node);
+
+    if (s == nullptr)  {
+        // sibling is null doubly black upwards
+        fixDoubleBlack(root, p);
+    } else {
+        // It has a sibling
+
+        // Check the color of the sibling
+        if (s -> color == 1) {
+            // sibling is red
+        
+        p -> color = 1; 
+        s -> color = 0; 
+        if (p-> left == s) {
+            // sibling is the left child  
+            rotateRight(p);
+        } else { 
+            // sibling is the right child
+            rotateLeft(p); 
+        }
+
+        // Recursively check
+        fixDoubleBlack(root, node);
+
+
+        } else {
+            // sibling is black
+
+            // Now check if the sibling has a red child or not and do accordingly
+            // Also according to the farther and nearer red child do accordingly
+            bool hasARedChild = ((s-> left != nullptr && s -> left -> color == 1) || (s -> right != nullptr || s -> right -> color == 1));
+
+            if (hasARedChild) {
+                // Sibling has a red child!!!
+
+                if (s -> left !=nullptr && s -> left -> color == 1) {
+                    // Left one is red
+                    // Also has the case if both are red
+
+                    if (p -> left == s) {
+                        // sibling is the left child
+                        s -> left -> color = s -> color; 
+                        s -> color = p -> color; 
+                        rotateRight(p);
+                        // Working perfectly case 2.3
+                    } else {
+                        // sibling is the right child
+                        s -> left -> color = p -> color; 
+                        rotateRight(s); // TODO Is it needed? According to sir notes, needed but according to visualisation not needed
+                        rotateLeft(p);
+                        // Working perfectly case 2.2
+                    }
+
+                } else {
+                    // Right one is red
+
+                    if (p -> left == s) {
+                        // sibling is the left child
+                        s -> right -> color = p -> color; 
+                        rotateLeft(s); // TODO Is it needed? According to sir notes, needed but according to visualisation not needed
+                        rotateRight(p);
+                        // Working perfectly case 2.2
+                    } else {
+                        // sibling is the right child
+                        s -> right -> color = s -> color; 
+                        s -> color = p -> color; 
+                        rotateLeft(p);
+                        // Working perfectly case 2.3
+                    }
+
+                }   // End of which one is red
+
+                p -> color = 0;
+
+            } else {
+                // No red child in the sibling, both are black
+
+                // Good to recolor
+                s -> color = 1;
+                if (p -> color == 0) {
+                    //  Parent color is black
+                    fixDoubleBlack(root, p);
+                } else {
+                    // Parent was red
+                    p -> color = 0;
+                }
+            }
+        }
+    }
+}   // End of fixing double black function
+
+
+/**
+ * DELETES the node in the tree
+ * @param root - The root node of the tree
+ * @param v - The node to be inserted in the RBT
+ */
 void deleteNode(Node* root, Node* v) {
-    Node *u = nodeReplace(v);
+    Node *u = findNodeToReplace(v);
 
     cout << "Deletion in preogress" << endl;
 
@@ -379,7 +520,8 @@ void deleteNode(Node* root, Node* v) {
             // Not a root node
 
             if (uvBlack) {
-                // If it is a black in leaf node
+                // If it is a black in leaf node, it's deletion has left a doubly black null node
+                // The deletion will leave a doubly black leaf node, so will take care of this first
                 fixDoubleBlack(root, v);
             } else {
 
@@ -389,6 +531,7 @@ void deleteNode(Node* root, Node* v) {
                 }
             }
 
+            // After all set, good to remove the node
             if (getParent(v) -> right == v) {
                 // It is a right child
                 p -> right = nullptr;
@@ -442,8 +585,15 @@ void deleteNode(Node* root, Node* v) {
     swapValues(u, v);
     deleteNode(root, u); // This will become like the above two cases
 
-}
+}   // End of delete node function
 
+/**
+ * Delete the node in the tree by value
+ * This calls the deleteNode function after searching the node to be deleted
+ * 
+ * @param root - The root of the BST
+ * @param val - The value to be deleted
+ */
 void deleteByValue(Node *root, int val) {
 
     // Tree is empty, no node to delete
@@ -457,16 +607,17 @@ void deleteByValue(Node *root, int val) {
         cout << "No Node found to be deleted with value: " << val << endl;
         return;
     } else {
-        cout << "Value found deleting it" << endl;
-    }
+        cout << "Value " << (v -> key) << " found deleting it" << endl;
 
-    // Now we will delete the node v
-    deleteNode(root, v);
+        // Now we will delete the node v
+        deleteNode(root, v);
+    }
 }
 
 
 /* --- Printing the Tree --- */
 
+// Prints the tree in PostOrder
 void printPostorder(Node *node) {
    if (node == nullptr)
       return;
@@ -476,6 +627,7 @@ void printPostorder(Node *node) {
    cout << node -> key << " ";
 }
 
+// Prints the tree in Preorder
 void printPreorder(Node* node) {
    if (node == NULL)
       return;
@@ -544,7 +696,12 @@ int main() {
     root = rootPointer -> left;
 
     deleteByValue(root, 3);
-    deleteByValue(root, 20);
+    root = rootPointer -> left;
+    
+    deleteByValue(root, 10);
+    root = rootPointer -> left;
+    
+    deleteByValue(root, 6);
     root = rootPointer -> left;
 
     // // Searching
