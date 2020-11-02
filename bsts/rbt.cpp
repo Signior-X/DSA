@@ -95,6 +95,8 @@ Node *getUncle(Node *node) {
 
 
 /* --- Now define the rotations --- */
+
+// Left rotation
 void rotateLeft(Node *node) {
 
     // node -> right should not be empty take care while sending
@@ -131,6 +133,7 @@ void rotateLeft(Node *node) {
     }
 }
 
+// Right rotation
 void rotateRight(Node *node) {
 
     // node -> right should not be empty take care while sending
@@ -165,6 +168,26 @@ void rotateRight(Node *node) {
         nn -> parent = nullptr;
     }
 }
+
+
+
+
+/* --- Searching --- */
+Node *searchNode(Node *root, int val) {
+    
+    // Base Cases: root is null or key is present at root
+    if (root == nullptr || root -> key == val)
+       return root;
+    
+    // Key is greater than root's key
+    if (root -> key < val)
+       return searchNode(root -> right, val);
+ 
+    // Key is smaller than root's key
+    return searchNode(root -> left, val);
+
+}
+
 
 /* --- Insertion --- */
 
@@ -266,7 +289,7 @@ void repairInsertedTree(Node *node) {
 
 
 /**
- * Take care that root isn't empty, if it is empty simply add it to newNode
+ * Inserts a node in the Red black tree and also updates the rootPointer if needed
  * 
  * @param The root of the tree in which you want to insert
  * @param The new node you want to insert
@@ -290,7 +313,159 @@ Node *insertNode(Node *root, Node *node) {
     return root;
 }
 
+/* --- Deletion --- */
 
+void swapValues(Node *u, Node *v) { 
+    int temp;
+    temp = u -> key; 
+    u -> key = v -> key; 
+    v -> key = temp; 
+}
+
+Node *findPredecissor(Node *node) {
+
+    // Take the left node
+    Node *tnode = node -> left;
+
+    while (tnode -> right != nullptr) {
+        tnode = tnode -> right;
+    }
+
+    return tnode;
+}
+
+Node *nodeReplace(Node *node) {
+    // If leaf node
+    if (node -> left == nullptr && node -> right == nullptr)
+        return nullptr;
+    
+    // If both the children are present
+    if (node -> left != nullptr && node -> right != nullptr) {
+        return findPredecissor(node);
+    }
+
+    // Now if the child has only one child return that one
+    if (node -> left == nullptr) {
+        return node -> right;
+    } else {
+        return node -> left;
+    }    
+}
+
+
+void fixDoubleBlack(Node *root, Node *node) {
+    // Here we will fix the doubleBlackNode
+    cout << "Fixing double black" << endl;
+}
+
+void deleteNode(Node* root, Node* v) {
+    Node *u = nodeReplace(v);
+
+    cout << "Deletion in preogress" << endl;
+
+    bool uvBlack = ( (u == nullptr || u -> color == 0) && (v -> color == 0));
+    Node *p = getParent(v);
+
+    // If the node to be deleted is leaf node i.e. u is nullptr
+    if (u == nullptr) {
+
+        // check if root node
+        if (v == root) {
+            root = nullptr;
+            rootPointer -> left = nullptr;
+
+            // Done for this case
+        } else {
+            // Not a root node
+
+            if (uvBlack) {
+                // If it is a black in leaf node
+                fixDoubleBlack(root, v);
+            } else {
+
+                if (getSibling(v) != nullptr) {
+                    // Color the sibling red if it is not null
+                    getSibling(v) -> color = 1;
+                }
+            }
+
+            if (getParent(v) -> right == v) {
+                // It is a right child
+                p -> right = nullptr;
+            } else {
+                p -> left = nullptr;
+            }
+
+        }
+
+        delete v;
+        return;
+    }   // A leaf node case
+
+    // The case when it has atleast one child
+    if (v -> left == nullptr || v-> right == nullptr) {
+
+        if (v == root) {
+            // The root node
+            // Make u the new root and delete v
+            u -> parent = nullptr;
+            rootPointer -> left = u;
+            delete v;
+        } else {
+            // Not a root node and has atleast one child
+            
+            if (getParent(v) -> right == v) {
+                // It was a right child
+                p -> right = u;
+                u -> parent = p;
+            } else {
+                // It was a left child
+                p -> left = u;
+                u -> parent = p;
+            }
+            
+            delete v;   // Finally delete v after u has been placed in place of it
+            
+            if (uvBlack) {
+                // If u and v both are black, black depth has decreased!
+                fixDoubleBlack(root, u);
+            } else {
+                // u or v red, color u black
+                u -> color = 0;
+            }
+        }
+
+        return;
+    }   // End of case when one child
+
+    // The case when both the children are present
+    swapValues(u, v);
+    deleteNode(root, u); // This will become like the above two cases
+
+}
+
+void deleteByValue(Node *root, int val) {
+
+    // Tree is empty, no node to delete
+    if (root == nullptr) {
+        return;
+    }
+
+    Node *v = searchNode(root, val);
+    if (v == nullptr) {
+        // This implies value not found
+        cout << "No Node found to be deleted with value: " << val << endl;
+        return;
+    } else {
+        cout << "Value found deleting it" << endl;
+    }
+
+    // Now we will delete the node v
+    deleteNode(root, v);
+}
+
+
+/* --- Printing the Tree --- */
 
 void printPostorder(Node *node) {
    if (node == nullptr)
@@ -362,6 +537,47 @@ int main() {
     insertNode(root, newNode(11, 1));
     root = rootPointer -> left;
 
+    insertNode(root, newNode(14, 1));
+    root = rootPointer -> left;
+
+    insertNode(root, newNode(75, 1));
+    root = rootPointer -> left;
+
+    deleteByValue(root, 3);
+    deleteByValue(root, 20);
+    root = rootPointer -> left;
+
+    // // Searching
+    // int a;
+    // while (1)
+    // {
+    //     cin >> a;
+    //     if (a == 0) {
+    //         break;
+    //     } else {
+    //         Node *s = searchNode(root, a);
+    //         if (s != nullptr) {
+    //             cout << "Value Found " << s -> key << endl;
+    //         } else {
+    //             cout << "Value Not Found!" << endl;
+    //         }
+            
+    //     }
+    // }
+    
+
+    // Deletion
+    // int b;
+    // while (1)
+    // {
+    //     cin >> b;
+    //     if (b == 0) {
+    //         break;
+    //     } else {
+    //         deleteByValue(root, b);
+    //     }
+    // }
+    
 
     // // prints hello world
     // int choice = 1;
@@ -399,6 +615,7 @@ int main() {
 
 
     printPreorder(root);
+    cout << endl;
 
     return 0;
 }
