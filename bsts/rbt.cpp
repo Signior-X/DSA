@@ -432,7 +432,7 @@ void fixDoubleBlack(Node *root, Node *node) {
 
             // Now check if the sibling has a red child or not and do accordingly
             // Also according to the farther and nearer red child do accordingly
-            bool hasARedChild = ((s-> left != nullptr && s -> left -> color == 1) || (s -> right != nullptr || s -> right -> color == 1));
+            bool hasARedChild = ((s-> left != nullptr && s -> left -> color == 1) || (s -> right != nullptr && s -> right -> color == 1));
 
             if (hasARedChild) {
                 // Sibling has a red child!!!
@@ -611,6 +611,7 @@ void deleteByValue(Node *root, int val) {
 
         // Now we will delete the node v
         deleteNode(root, v);
+        cout << "Value deleted" << endl;
     }
 }
 
@@ -697,11 +698,11 @@ int main() {
 
     deleteByValue(root, 3);
     root = rootPointer -> left;
-    
-    deleteByValue(root, 10);
+
+    deleteByValue(root, 11);
     root = rootPointer -> left;
-    
-    deleteByValue(root, 6);
+
+    deleteByValue(root, 30);
     root = rootPointer -> left;
 
     // // Searching
@@ -723,54 +724,71 @@ int main() {
     // }
     
 
-    // Deletion
-    // int b;
-    // while (1)
-    // {
-    //     cin >> b;
-    //     if (b == 0) {
-    //         break;
-    //     } else {
-    //         deleteByValue(root, b);
-    //     }
-    // }
+
     
 
-    // // prints hello world
-    // int choice = 1;
-    // Node *tree;
-    // tree = nullptr;
+    int choice = 1;
+    int inp = 0;
 
-    // while (1) {
-    //     cout << "Enter 1 for insertion: " << endl;
-    //     cout << "Enter 2 for deletion: " << endl;
-    //     cout << "Enter 3 for searching: " << endl;
-    //     cout << "Enter 4 for exit: " << endl;
-    //     cin >> choice;
+    while (1) {
+        cout << "Enter 1 for insertion: " << endl;
+        cout << "Enter 2 for deletion: " << endl;
+        cout << "Enter 3 for searching: " << endl;
+        cout << "Enter 4 for preorder printing: " << endl;
+        cout << "Enter 5 for exit: " << endl;
+        cin >> choice;
 
-    //     switch (choice)
-    //     {
-    //     case 1:
-    //         Node *n, nl;
-    //         n = &nl;
+        switch (choice)
+        {
+        case 1:
+            // Insertion
 
-    //         n->key = choice;
+            cout << "Enter the Value to be inserted: ";
+            cin >> inp;
 
-    //         cout << (tree == nullptr) <<endl;
+            insertNode(root, newNode(inp, 1));
+            root = rootPointer -> left;
+            
+            break;
+        case 2:
+            // Deletion
+            cout << "Enter the value to be deleted: ";
+            cin >> inp;
 
-    //         // insertNode(tree, n);
-    //         break;
+            deleteByValue(root, inp);
+            root = rootPointer -> left;
+            
+            break;
+        case 3:
+            // Searching
+            cout << "Enter the Values to be searched for: ";
+            cin >> inp;
 
-    //     case 4:
-    //         exit(1);
-        
-    //     default:
-    //         cout << "Invalid choice" << endl;
-    //         break;
-    //     }
-    // }
+            if (searchNode(root, inp) != nullptr) {
+                cout << "Value Found " << inp << endl;
+            } else {
+                cout << "Value Not Found!" << endl;
+            }
+
+            break;
+        case 4:
+            // Print in Preorder
+            printPreorder(root);
+            cout << endl;
+
+            break;
+        case 5:
+            exit(1);
+            
+            break;
+        default:
+            cout << "Invalid choice" << endl;
+            break;
+        }
+    }
 
 
+    // Print the tree in preorder
     printPreorder(root);
     cout << endl;
 
