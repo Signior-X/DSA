@@ -143,7 +143,7 @@ void rotateLeft(Node *node) {
 // Right rotation
 void rotateRight(Node *node) {
 
-    // node -> right should not be empty take care while sending
+    // node -> left should not be empty take care while sending
     // As we are rotating about it
 
     Node *nn = node -> left; // Storing the left node, if nullptr means black
@@ -437,42 +437,50 @@ void fixDoubleBlack(Node *root, Node *node) {
             if (hasARedChild) {
                 // Sibling has a red child!!!
 
-                if (s -> left !=nullptr && s -> left -> color == 1) {
-                    // Left one is red
-                    // Also has the case if both are red
 
-                    if (p -> left == s) {
-                        // sibling is the left child
+                if (p -> left == s) {
+                    // sibling is the left child
+
+                    // check if the farther child is (left one is red or not)
+                    if (s -> left != nullptr && s -> left -> color == 1) {
+
+                        // one rotation can fix the problem
                         s -> left -> color = s -> color; 
                         s -> color = p -> color; 
                         rotateRight(p);
                         // Working perfectly case 2.3
+
                     } else {
-                        // sibling is the right child
-                        s -> left -> color = p -> color; 
-                        rotateRight(s); // TODO Is it needed? According to sir notes, needed but according to visualisation not needed
-                        rotateLeft(p);
+
+                        // farther child is not red, double rotation needed
+                        s -> right -> color = p -> color; 
+                        rotateLeft(s);
+                        rotateRight(p);
                         // Working perfectly case 2.2
+
                     }
 
                 } else {
-                    // Right one is red
-
-                    if (p -> left == s) {
-                        // sibling is the left child
-                        s -> right -> color = p -> color; 
-                        rotateLeft(s); // TODO Is it needed? According to sir notes, needed but according to visualisation not needed
-                        rotateRight(p);
-                        // Working perfectly case 2.2
-                    } else {
-                        // sibling is the right child
+                    // sibling is the right child
+                    
+                    // check if farther one (right one is red or not)
+                    if (s -> right != nullptr && s -> right -> color == 1) {
+                        
+                        // One rotation can fix the double blackness
                         s -> right -> color = s -> color; 
                         s -> color = p -> color; 
                         rotateLeft(p);
                         // Working perfectly case 2.3
-                    }
 
-                }   // End of which one is red
+                    } else {
+
+                        // farther child is not red, so two rotations are needed
+                        s -> left -> color = p -> color; 
+                        rotateRight(s);
+                        rotateLeft(p);
+                        // Working perfectly case 2.2
+                    }
+                }   // End of what kind of child is sibling
 
                 p -> color = 0;
 
@@ -628,9 +636,19 @@ void printPostorder(Node *node) {
    cout << node -> key << " ";
 }
 
+void printPostorderWithColor(Node *node) {
+   if (node == nullptr)
+      return;
+
+   printPostorderWithColor(node -> left);
+   printPostorderWithColor(node -> right);
+   cout << node -> key << "(" << node -> color << ")" << " ";
+}
+
+
 // Prints the tree in Preorder
 void printPreorder(Node* node) {
-   if (node == NULL)
+   if (node == nullptr)
       return;
 
    cout << node -> key << " ";
@@ -638,6 +656,15 @@ void printPreorder(Node* node) {
    printPreorder(node -> right);
 }
 
+// Print the tree in preorder with color
+void printPreorderWithColor(Node* node) {
+   if (node == nullptr)
+      return;
+
+   cout << node -> key << "(" << node -> color << ")" << " ";
+   printPreorderWithColor(node -> left);
+   printPreorderWithColor(node -> right);
+}
 
 // main function -
 // where the execution of program begins
@@ -693,10 +720,34 @@ int main() {
     insertNode(root, newNode(14, 1));
     root = rootPointer -> left;
 
+    printPreorder(root);
+
     insertNode(root, newNode(75, 1));
     root = rootPointer -> left;
 
     deleteByValue(root, 3);
+    root = rootPointer -> left;
+
+    deleteByValue(root, 10);
+    root = rootPointer -> left;
+
+    printPreorder(root);
+
+    deleteByValue(root, 6);
+    root = rootPointer -> left;
+
+    printPreorder(root);
+
+    deleteByValue(root, 17);
+    root = rootPointer -> left;
+
+    deleteByValue(root, 50);
+    root = rootPointer -> left;
+
+    deleteByValue(root, 14);
+    root = rootPointer -> left;
+
+    deleteByValue(root, 12);
     root = rootPointer -> left;
 
     deleteByValue(root, 11);
@@ -704,6 +755,39 @@ int main() {
 
     deleteByValue(root, 30);
     root = rootPointer -> left;
+
+    deleteByValue(root, 20);
+    root = rootPointer -> left;
+
+    deleteByValue(root, 20);
+    root = rootPointer -> left;
+
+    deleteByValue(root, 18);
+    root = rootPointer -> left;
+
+    deleteByValue(root, 40);
+    root = rootPointer -> left;
+
+    deleteByValue(root, 70);
+    root = rootPointer -> left;
+
+    deleteByValue(root, 75);
+    root = rootPointer -> left;
+
+    deleteByValue(root, 5);
+    root = rootPointer -> left;
+
+    deleteByValue(root, 60);
+    root = rootPointer -> left;
+
+    // All exactly same
+
+
+
+    
+
+
+    
 
     // // Searching
     // int a;
@@ -730,66 +814,69 @@ int main() {
     int choice = 1;
     int inp = 0;
 
-    while (1) {
-        cout << "Enter 1 for insertion: " << endl;
-        cout << "Enter 2 for deletion: " << endl;
-        cout << "Enter 3 for searching: " << endl;
-        cout << "Enter 4 for preorder printing: " << endl;
-        cout << "Enter 5 for exit: " << endl;
-        cin >> choice;
+    // while (1) {
+    //     cout << "Enter 1 for insertion: " << endl;
+    //     cout << "Enter 2 for deletion: " << endl;
+    //     cout << "Enter 3 for searching: " << endl;
+    //     cout << "Enter 4 for preorder printing: " << endl;
+    //     cout << "Enter 5 for exit: " << endl;
+    //     cin >> choice;
 
-        switch (choice)
-        {
-        case 1:
-            // Insertion
+    //     switch (choice)
+    //     {
+    //     case 1:
+    //         // Insertion
 
-            cout << "Enter the Value to be inserted: ";
-            cin >> inp;
+    //         cout << "Enter the Value to be inserted: ";
+    //         cin >> inp;
 
-            insertNode(root, newNode(inp, 1));
-            root = rootPointer -> left;
+    //         insertNode(root, newNode(inp, 1));
+    //         root = rootPointer -> left;
             
-            break;
-        case 2:
-            // Deletion
-            cout << "Enter the value to be deleted: ";
-            cin >> inp;
+    //         break;
+    //     case 2:
+    //         // Deletion
+    //         cout << "Enter the value to be deleted: ";
+    //         cin >> inp;
 
-            deleteByValue(root, inp);
-            root = rootPointer -> left;
+    //         deleteByValue(root, inp);
+    //         root = rootPointer -> left;
             
-            break;
-        case 3:
-            // Searching
-            cout << "Enter the Values to be searched for: ";
-            cin >> inp;
+    //         break;
+    //     case 3:
+    //         // Searching
+    //         cout << "Enter the Values to be searched for: ";
+    //         cin >> inp;
 
-            if (searchNode(root, inp) != nullptr) {
-                cout << "Value Found " << inp << endl;
-            } else {
-                cout << "Value Not Found!" << endl;
-            }
+    //         if (searchNode(root, inp) != nullptr) {
+    //             cout << "Value Found " << inp << endl;
+    //         } else {
+    //             cout << "Value Not Found!" << endl;
+    //         }
 
-            break;
-        case 4:
-            // Print in Preorder
-            printPreorder(root);
-            cout << endl;
+    //         break;
+    //     case 4:
+    //         // Print in Preorder
+    //         printPreorder(root);
+    //         cout << endl;
 
-            break;
-        case 5:
-            exit(1);
+    //         break;
+    //     case 5:
+    //         exit(1);
             
-            break;
-        default:
-            cout << "Invalid choice" << endl;
-            break;
-        }
-    }
+    //         break;
+    //     default:
+    //         cout << "Invalid choice" << endl;
+    //         break;
+    //     }
+    // }
 
 
     // Print the tree in preorder
     printPreorder(root);
+    cout << endl;
+
+    printPreorderWithColor(root);
     cout << endl;
 
     return 0;
