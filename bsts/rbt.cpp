@@ -666,6 +666,47 @@ void printPreorderWithColor(Node* node) {
    printPreorderWithColor(node -> right);
 }
 
+
+/* --- Range Queries --- */
+
+int getRangeCount(Node *root, int low, int high) {
+    if (root == nullptr)
+        return 0;
+    
+    // Now check the key is in the range
+
+    if (root -> key >= low && root -> key <= high) {
+        return 1 + getRangeCount(root -> left, low, high) + getRangeCount(root -> right, low, high);
+    }
+    else  if (root -> key < low) {
+        // Key got less, search for bigger ones in right
+        return getRangeCount(root -> right, low, high);
+    }
+    else {
+        // Key got more, search for smaller ones in left
+        return getRangeCount(root -> left, low, high);
+    }
+}
+
+int getRangeSum(Node *root, int low, int high) {
+    if (root == nullptr)
+        return 0;
+    
+    // Now check the key is in the range
+
+    if (root -> key >= low && root -> key <= high) {
+        return (root -> key) + getRangeSum(root -> left, low, high) + getRangeSum(root -> right, low, high);
+    }
+    else  if (root -> key < low) {
+        // Key got less, search for bigger ones in right
+        return getRangeSum(root -> right, low, high);
+    }
+    else {
+        // Key got more, search for smaller ones in left
+        return getRangeSum(root -> left, low, high);
+    }
+}
+
 // main function -
 // where the execution of program begins
 int main() {
@@ -720,65 +761,67 @@ int main() {
     insertNode(root, newNode(14, 1));
     root = rootPointer -> left;
 
-    printPreorder(root);
-
     insertNode(root, newNode(75, 1));
     root = rootPointer -> left;
 
-    deleteByValue(root, 3);
-    root = rootPointer -> left;
-
-    deleteByValue(root, 10);
-    root = rootPointer -> left;
-
     printPreorder(root);
+    cout << endl;
 
-    deleteByValue(root, 6);
-    root = rootPointer -> left;
 
-    printPreorder(root);
+    // deleteByValue(root, 3);
+    // root = rootPointer -> left;
 
-    deleteByValue(root, 17);
-    root = rootPointer -> left;
+    // deleteByValue(root, 10);
+    // root = rootPointer -> left;
 
-    deleteByValue(root, 50);
-    root = rootPointer -> left;
+    // printPreorder(root);
 
-    deleteByValue(root, 14);
-    root = rootPointer -> left;
+    // deleteByValue(root, 6);
+    // root = rootPointer -> left;
 
-    deleteByValue(root, 12);
-    root = rootPointer -> left;
+    // printPreorder(root);
 
-    deleteByValue(root, 11);
-    root = rootPointer -> left;
+    // deleteByValue(root, 17);
+    // root = rootPointer -> left;
 
-    deleteByValue(root, 30);
-    root = rootPointer -> left;
+    // deleteByValue(root, 50);
+    // root = rootPointer -> left;
 
-    deleteByValue(root, 20);
-    root = rootPointer -> left;
+    // deleteByValue(root, 14);
+    // root = rootPointer -> left;
 
-    deleteByValue(root, 20);
-    root = rootPointer -> left;
+    // deleteByValue(root, 12);
+    // root = rootPointer -> left;
 
-    deleteByValue(root, 18);
-    root = rootPointer -> left;
+    // deleteByValue(root, 11);
+    // root = rootPointer -> left;
 
-    deleteByValue(root, 40);
-    root = rootPointer -> left;
+    // deleteByValue(root, 30);
+    // root = rootPointer -> left;
 
-    deleteByValue(root, 70);
-    root = rootPointer -> left;
+    // deleteByValue(root, 20);
+    // root = rootPointer -> left;
 
-    deleteByValue(root, 75);
-    root = rootPointer -> left;
+    // deleteByValue(root, 20);
+    // root = rootPointer -> left;
 
-    deleteByValue(root, 5);
-    root = rootPointer -> left;
+    // deleteByValue(root, 18);
+    // root = rootPointer -> left;
 
-    deleteByValue(root, 60);
-    root = rootPointer -> left;
+    // deleteByValue(root, 40);
+    // root = rootPointer -> left;
+
+    // deleteByValue(root, 70);
+    // root = rootPointer -> left;
+
+    // deleteByValue(root, 75);
+    // root = rootPointer -> left;
+
+    // deleteByValue(root, 5);
+    // root = rootPointer -> left;
+
+    // deleteByValue(root, 60);
+    // root = rootPointer -> left;
 
     // All exactly same
 
@@ -813,63 +856,83 @@ int main() {
 
     int choice = 1;
     int inp = 0;
+    int cr = 1, sr = 0, li=0, hi=0;
+    double avr = 0;
 
-    // while (1) {
-    //     cout << "Enter 1 for insertion: " << endl;
-    //     cout << "Enter 2 for deletion: " << endl;
-    //     cout << "Enter 3 for searching: " << endl;
-    //     cout << "Enter 4 for preorder printing: " << endl;
-    //     cout << "Enter 5 for exit: " << endl;
-    //     cin >> choice;
+    while (1) {
+        cout << "Enter 1 for insertion: " << endl;
+        cout << "Enter 2 for deletion: " << endl;
+        cout << "Enter 3 for searching: " << endl;
+        cout << "Enter 4 for Range Average: " << endl;
+        cout << "Enter 5 for preorder printing: " << endl;
+        cout << "Enter 6 for exit: " << endl;
+        cin >> choice;
 
-    //     switch (choice)
-    //     {
-    //     case 1:
-    //         // Insertion
+        switch (choice)
+        {
+        case 1:
+            // Insertion
 
-    //         cout << "Enter the Value to be inserted: ";
-    //         cin >> inp;
+            cout << "Enter the Value to be inserted: ";
+            cin >> inp;
 
-    //         insertNode(root, newNode(inp, 1));
-    //         root = rootPointer -> left;
+            insertNode(root, newNode(inp, 1));
+            root = rootPointer -> left;
             
-    //         break;
-    //     case 2:
-    //         // Deletion
-    //         cout << "Enter the value to be deleted: ";
-    //         cin >> inp;
+            break;
+        case 2:
+            // Deletion
+            cout << "Enter the value to be deleted: ";
+            cin >> inp;
 
-    //         deleteByValue(root, inp);
-    //         root = rootPointer -> left;
+            deleteByValue(root, inp);
+            root = rootPointer -> left;
             
-    //         break;
-    //     case 3:
-    //         // Searching
-    //         cout << "Enter the Values to be searched for: ";
-    //         cin >> inp;
+            break;
+        case 3:
+            // Searching
+            cout << "Enter the Values to be searched for: ";
+            cin >> inp;
 
-    //         if (searchNode(root, inp) != nullptr) {
-    //             cout << "Value Found " << inp << endl;
-    //         } else {
-    //             cout << "Value Not Found!" << endl;
-    //         }
+            if (searchNode(root, inp) != nullptr) {
+                cout << "Value Found " << inp << endl;
+            } else {
+                cout << "Value Not Found!" << endl;
+            }
 
-    //         break;
-    //     case 4:
-    //         // Print in Preorder
-    //         printPreorder(root);
-    //         cout << endl;
+            break;
+        case 4:
 
-    //         break;
-    //     case 5:
-    //         exit(1);
+            cout << "Enter the Range low and then High seprated by space: " << endl;
+            cin >> li >> hi;
+
+            cr = getRangeCount(root, li, hi);
+            sr = getRangeSum(root, li, hi);
+
+            if (cr == 0) {
+                // Zero values found
+                cout << "Average on numbers in range " << li << " " << hi << " is: 0" << endl;
+            } else {
+                avr =  ((double) sr) / cr;
+                cout << "Average on numbers in range " << li << " " << hi << " is: " << avr << endl;
+            }
+
+            break;
+        case 5:
+            // Print in Preorder
+            printPreorder(root);
+            cout << endl;
+
+            break;
+        case 6:
+            exit(1);
             
-    //         break;
-    //     default:
-    //         cout << "Invalid choice" << endl;
-    //         break;
-    //     }
-    // }
+            break;
+        default:
+            cout << "Invalid choice" << endl;
+            break;
+        }
+    }
 
 
     // Print the tree in preorder
