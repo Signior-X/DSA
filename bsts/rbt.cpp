@@ -878,6 +878,10 @@ int main() {
 
             insertNode(root, newNode(inp, 1));
             root = rootPointer -> left;
+
+            // Print in Preorder
+            printPreorderWithColor(root);
+            cout << endl;
             
             break;
         case 2:
@@ -887,6 +891,10 @@ int main() {
 
             deleteByValue(root, inp);
             root = rootPointer -> left;
+
+            // Print in Preorder
+            printPreorderWithColor(root);
+            cout << endl;
             
             break;
         case 3:
@@ -920,7 +928,7 @@ int main() {
             break;
         case 5:
             // Print in Preorder
-            printPreorder(root);
+            printPreorderWithColor(root);
             cout << endl;
 
             break;
