@@ -778,10 +778,6 @@ int main() {
     insertNode(root, newNode(75, 1));
     root = rootPointer -> left;
 
-    printPreorder(root);
-    cout << endl;
-
-
     // deleteByValue(root, 3);
     // root = rootPointer -> left;
 
@@ -790,6 +786,7 @@ int main() {
 
     cout << "Already inserted Nodes" << endl;
     printPreorder(root);
+    cout << endl;
     
     int choice = 1;
     int inp = 0;
