@@ -1,3 +1,15 @@
+/**
+ * @author Priyam Seth (Group 23)
+ * Date Created - Nov 2nd, 2020
+ * 
+ * Here in this file, I will create the implementation of RBT
+ * This is also one of my first program towards learning cpp
+ * 
+ * This code complies with the visualisation used by Sir in class
+ * https://www.cs.usfca.edu/~galles/visualization/RedBlack.html
+ * 
+*/
+
 #include <iostream>
 
 using namespace std;
@@ -6,13 +18,15 @@ using namespace std;
 /*
 
 A red black tree
-1. root must be black
+1. root must be black (black is 0 in this code)
 2. No two red childs near to each other
 3. Black depth equal
 4. Take null leaves as black
 
 We do coloring or rotation in the tree
 to satisfy these properites
+
+color code => 0 for black and 1 for red
 
 */
 
@@ -774,92 +788,16 @@ int main() {
     // deleteByValue(root, 10);
     // root = rootPointer -> left;
 
-    // printPreorder(root);
-
-    // deleteByValue(root, 6);
-    // root = rootPointer -> left;
-
-    // printPreorder(root);
-
-    // deleteByValue(root, 17);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 50);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 14);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 12);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 11);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 30);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 20);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 20);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 18);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 40);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 70);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 75);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 5);
-    // root = rootPointer -> left;
-
-    // deleteByValue(root, 60);
-    // root = rootPointer -> left;
-
-    // All exactly same
-
-
-
+    cout << "Already inserted Nodes" << endl;
+    printPreorder(root);
     
-
-
-    
-
-    // // Searching
-    // int a;
-    // while (1)
-    // {
-    //     cin >> a;
-    //     if (a == 0) {
-    //         break;
-    //     } else {
-    //         Node *s = searchNode(root, a);
-    //         if (s != nullptr) {
-    //             cout << "Value Found " << s -> key << endl;
-    //         } else {
-    //             cout << "Value Not Found!" << endl;
-    //         }
-            
-    //     }
-    // }
-    
-
-
-    
-
     int choice = 1;
     int inp = 0;
     int cr = 1, sr = 0, li=0, hi=0;
     double avr = 0;
 
     while (1) {
+        cout << endl;
         cout << "Enter 1 for insertion: " << endl;
         cout << "Enter 2 for deletion: " << endl;
         cout << "Enter 3 for searching: " << endl;
